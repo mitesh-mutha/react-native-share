@@ -3,6 +3,9 @@ package cl.json;
 import android.content.Intent;
 import android.content.ActivityNotFoundException;
 
+import android.net.Uri;
+import java.io.File;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -44,18 +47,37 @@ public class RNShareModule extends ReactContextBaseJavaModule {
    */
   private Intent createShareIntent(ReadableMap options) {
     Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-    intent.setType("text/plain");
 
-    if (hasValidKey("share_subject", options) ) {
-      intent.putExtra(Intent.EXTRA_SUBJECT, options.getString("share_subject"));
-    }
+    if (hasValidKey("share_image_path", options)) {
+      intent.setType("image/*");
 
-    if (hasValidKey("share_text", options) && hasValidKey("share_URL", options)) {
-      intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_text") + " " + options.getString("share_URL"));
-    } else if (hasValidKey("share_URL", options)) {
-      intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_URL"));
-    } else if (hasValidKey("share_text", options) ) {
-      intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_text"));
+      //Uri uri = Uri.parse(options.getString("share_image_path"));
+      Uri uri = Uri.fromFile(new File(options.getString("share_image_path")));
+      intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+      if (hasValidKey("share_text", options) && hasValidKey("share_URL", options)) {
+        intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_text") + " " + options.getString("share_URL"));
+      } else if (hasValidKey("share_URL", options)) {
+        intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_URL"));
+      } else if (hasValidKey("share_text", options) ) {
+        intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_text"));
+      }
+
+      intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    } else {
+      intent.setType("text/plain");
+
+      if (hasValidKey("share_subject", options) ) {
+        intent.putExtra(Intent.EXTRA_SUBJECT, options.getString("share_subject"));
+      }
+
+      if (hasValidKey("share_text", options) && hasValidKey("share_URL", options)) {
+        intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_text") + " " + options.getString("share_URL"));
+      } else if (hasValidKey("share_URL", options)) {
+        intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_URL"));
+      } else if (hasValidKey("share_text", options) ) {
+        intent.putExtra(Intent.EXTRA_TEXT, options.getString("share_text"));
+      }
     }
     return intent;
   }

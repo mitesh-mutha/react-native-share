@@ -116,6 +116,15 @@ AppRegistry.registerComponent('Example', () => Example);
 
 NOTE: If both share_text and share_url are provided share_url will be concatenated to the end of share_text to form the body of the message. If only one is provided it will be used
 
+#### Android Image Share
+Sharing of images with caption is possible in Android. You have to provide the absolute full path of the image in options as "share_image_path".
+
+For example, "/storage/emulated/0/image.jpg" <- is the absolute full path of the image to be shared. You provide that as the input for "share_image_path". 
+
+The caption works in the way similar to text share.
+
+NOTE: Ensure that the image is in a shared location and not in the app's private data area. It won't share otherwise.
+
 ## how it looks:
 ![Demo Android](/assets/android.png)
 ![Demo iOS](/assets/ios.png)
